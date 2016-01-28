@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TestAccessibility</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hongbao_closed">抢红包已关闭</string>
+    <string name="hongbao_opened">抢红包已开启</string>
+
+</resources>

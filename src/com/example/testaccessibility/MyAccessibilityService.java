@@ -184,7 +184,7 @@ public class MyAccessibilityService extends AccessibilityService {
 				return nodes;
 			}
 		}
-		return new ArrayList<>();
+		return new ArrayList<AccessibilityNodeInfo>();
 	}
 
 	@Override

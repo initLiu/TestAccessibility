@@ -1,5 +1,6 @@
 package com.example.testaccessibility;
 
+import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 public class HongbaoMsg {
@@ -19,8 +20,13 @@ public class HongbaoMsg {
 
 			String[] hongbaoInfo = getSenderContentDescriptionFromNode(messageNode);
 
-			if (this.getSignature(hongbaoInfo[0], hongbaoContent,
-					hongbaoInfo[1]).equals(this.toString()))
+			String cur = this.getSignature(hongbaoInfo[0], hongbaoContent,
+					hongbaoInfo[1]);
+			String last = this.toString();
+			Log.e("Test", "curSignature=" + cur);
+			Log.e("Test", "lastSignature=" + last);
+
+			if (cur.equals(last))
 				return false;
 
 			this.sender = hongbaoInfo[0];

@@ -46,6 +46,7 @@ public class MyAccessibilityService extends AccessibilityService {
 		mReceivedNode = null;
 		mUnpackNode = null;
 
+		// printfNode(rootNodeInfo);
 		checkNodeInfo();
 
 		// 消息页收到红包消息
@@ -87,21 +88,23 @@ public class MyAccessibilityService extends AccessibilityService {
 			mNeedBackToRoot = false;
 			mIsInMsgPage = false;
 		}
+		List<AccessibilityNodeInfo> node4 = rootNodeInfo
+				.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/cer");
+		AccessibilityNodeInfo bakNode = null;
+		if (!node4.isEmpty()) {
+			bakNode = node4.get(node4.size() - 1);
+			if (bakNode.getContentDescription().equals("返回")
+					&& bakNode.getClassName()
+							.equals("android.widget.ImageView")) {
+				Log.e("Test", "返回消息页");
+				performGlobalAction(GLOBAL_ACTION_BACK);
+				mNeedBackToRoot = false;
+				mIsInMsgPage = false;
+			}
+		}
 	}
 
-	private void printfNode(AccessibilityNodeInfo node) {
-		Log.e("Test", "ClassName" + node.getClassName());
-		Log.e("Test", "Text" + node.getText());
-		if (node.getChildCount() == 0) {
-			return;
-		}
-		int count = node.getChildCount();
-		for (int i = 0; i < count; i++) {
-			printfNode(node.getChild(i));
-		}
-	}
-
-	private void checkNodeInfo() {
+	private synchronized void checkNodeInfo() {
 		if (rootNodeInfo == null) {
 			return;
 		}
@@ -136,9 +139,6 @@ public class MyAccessibilityService extends AccessibilityService {
 				Log.e("Test", "checkNodeInfo 收到红包还没有点开 与上次不同");
 				mLuckyMoneyReceived = true;
 				mReceivedNode = targetNode;
-			} else {
-				Log.e("Test", "checkNodeInfo 收到红包还没有点开 与上次相同");
-				mNeedBackToRoot = true;
 			}
 			return;
 		}
@@ -169,6 +169,19 @@ public class MyAccessibilityService extends AccessibilityService {
 		if (mIsInMsgPage) {
 			Log.e("Test", "checkNodeInfo 红包领取完，需要返回到消息页");
 			mNeedBackToRoot = true;
+		}
+	}
+
+	private void printfNode(AccessibilityNodeInfo node) {
+		Log.e("Test", "ClassName" + node.getClassName());
+		Log.e("Test", "Text" + node.getText());
+		Log.e("Test", "Desc" + node.getContentDescription());
+		if (node.getChildCount() == 0) {
+			return;
+		}
+		int count = node.getChildCount();
+		for (int i = 0; i < count; i++) {
+			printfNode(node.getChild(i));
 		}
 	}
 

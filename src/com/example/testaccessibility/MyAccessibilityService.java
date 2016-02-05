@@ -217,10 +217,10 @@ public class MyAccessibilityService extends AccessibilityService {
 	public boolean onUnbind(Intent intent) {
 		// TODO Auto-generated method stub
 		Log.e("Test", "onUnbind");
-
-		Intent intent2 = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-		intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent intent2 = new Intent(this, MainActivity.class);
+		intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent2.putExtra("name", "unbind");
 		startActivity(intent2);
 
 		return super.onUnbind(intent);

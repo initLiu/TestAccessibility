@@ -5,7 +5,6 @@ import java.util.List;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -15,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityManager.AccessibilityStateChangeListener;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
@@ -89,6 +89,15 @@ public class MainActivity extends Activity {
 		if (mServiceEnable) {
 			btn.setText(getString(R.string.hongbao_opened));
 		} else {
+			btn.setText(getString(R.string.hongbao_closed));
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		String str = intent.getExtras().getString("name");
+		if (str != null && str.equals("unbind")) {
 			btn.setText(getString(R.string.hongbao_closed));
 		}
 	}

@@ -96,9 +96,12 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		String str = intent.getExtras().getString("name");
-		if (str != null && str.equals("unbind")) {
-			btn.setText(getString(R.string.hongbao_closed));
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			String str = intent.getExtras().getString("name");
+			if (str != null && str.equals("unbind")) {
+				btn.setText(getString(R.string.hongbao_closed));
+			}
 		}
 	}
 }

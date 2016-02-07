@@ -2,12 +2,9 @@ package com.example.testaccessibility;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
-import android.os.Vibrator;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -31,75 +28,79 @@ public class MyAccessibilityService extends AccessibilityService {
 	private HongbaoMsg mHongbaoMsg = new HongbaoMsg();
 
 	private HongbaoNode mHongbaoNode = HongbaoNode.getInstace();
+	private Object object = new Object();
 
 	@Override
 	public void onAccessibilityEvent(AccessibilityEvent event) {
 		Log.e("Test", "onAccessibilityEvent");
-		if (mHongbaoMsg == null) {
-			return;
-		}
-		rootNodeInfo = event.getSource();
+		synchronized (object) {
+			if (mHongbaoMsg == null) {
+				return;
+			}
+			rootNodeInfo = event.getSource();
 
-		if (rootNodeInfo == null) {
-			return;
-		}
-		mReceivedNode = null;
-		mUnpackNode = null;
+			if (rootNodeInfo == null) {
+				return;
+			}
+			mReceivedNode = null;
+			mUnpackNode = null;
 
-		// printfNode(rootNodeInfo);
-		checkNodeInfo();
+			// printfNode(rootNodeInfo);
+			checkNodeInfo();
 
-		// 消息页收到红包消息
-		String validKey = null;
-		if ((validKey = mHongbaoNode.hasValidHongbaoNode()) != null) {
-			Log.e("Test", "消息页收到红包消息");
-			HongbaoNode hNode = mHongbaoNode.getHongbaoNode(validKey);
-			hNode.setEnter(validKey);
-			AccessibilityNodeInfo node = hNode.getHongbaoNodeInfo();
-			node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-		}
+			// 消息页收到红包消息
+			String validKey = null;
+			if ((validKey = mHongbaoNode.hasValidHongbaoNode()) != null) {
+				Log.e("Test", "消息页收到红包消息");
+				HongbaoNode hNode = mHongbaoNode.getHongbaoNode(validKey);
+				hNode.setEnter(validKey);
+				AccessibilityNodeInfo node = hNode.getHongbaoNodeInfo();
+				node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+			}
 
-		// 收到红包还没点开
-		if (mLuckyMoneyReceived && !mLuckyMoneyPicked && mReceivedNode != null) {
-			Log.e("Test", "收到红包还没点开");
-			mReceivedNode.getParent().performAction(
-					AccessibilityNodeInfo.ACTION_CLICK);
-			mIsInMsgPage = true;
-			mLuckyMoneyReceived = false;
-			mLuckyMoneyPicked = true;
-		}
+			// 收到红包还没点开
+			if (mLuckyMoneyReceived && !mLuckyMoneyPicked
+					&& mReceivedNode != null) {
+				Log.e("Test", "收到红包还没点开");
+				mReceivedNode.getParent().performAction(
+						AccessibilityNodeInfo.ACTION_CLICK);
+				mIsInMsgPage = true;
+				mLuckyMoneyReceived = false;
+				mLuckyMoneyPicked = true;
+			}
 
-		// 点开红包还没领取
-		if (mNeedUnpack && mUnpackNode != null) {
-			Log.e("Test", "点开红包还没领取");
-			mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-			mNeedUnpack = false;
-		}
+			// 点开红包还没领取
+			if (mNeedUnpack && mUnpackNode != null) {
+				Log.e("Test", "点开红包还没领取");
+				mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+				mNeedUnpack = false;
+			}
 
-		if (mNeedBack) {
-			Log.e("Test", "返回");
-			performGlobalAction(GLOBAL_ACTION_BACK);
-			mNeedBack = false;
-		}
+			if (mNeedBack) {
+				Log.e("Test", "返回");
+				performGlobalAction(GLOBAL_ACTION_BACK);
+				mNeedBack = false;
+			}
 
-		if (mNeedBackToRoot) {
-			Log.e("Test", "返回消息页");
-			performGlobalAction(GLOBAL_ACTION_BACK);
-			mNeedBackToRoot = false;
-			mIsInMsgPage = false;
-		}
-		List<AccessibilityNodeInfo> node4 = rootNodeInfo
-				.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/cer");
-		AccessibilityNodeInfo bakNode = null;
-		if (!node4.isEmpty()) {
-			bakNode = node4.get(node4.size() - 1);
-			if (bakNode.getContentDescription().equals("返回")
-					&& bakNode.getClassName()
-							.equals("android.widget.ImageView")) {
+			if (mNeedBackToRoot) {
 				Log.e("Test", "返回消息页");
 				performGlobalAction(GLOBAL_ACTION_BACK);
 				mNeedBackToRoot = false;
 				mIsInMsgPage = false;
+			}
+			List<AccessibilityNodeInfo> node4 = rootNodeInfo
+					.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/cer");
+			AccessibilityNodeInfo bakNode = null;
+			if (!node4.isEmpty()) {
+				bakNode = node4.get(node4.size() - 1);
+				if (bakNode.getContentDescription().equals("返回")
+						&& bakNode.getClassName().equals(
+								"android.widget.ImageView")) {
+					Log.e("Test", "返回消息页");
+					performGlobalAction(GLOBAL_ACTION_BACK);
+					mNeedBackToRoot = false;
+					mIsInMsgPage = false;
+				}
 			}
 		}
 	}
